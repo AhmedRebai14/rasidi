@@ -27,13 +27,14 @@ class TransactionModelAdapter extends TypeAdapter<TransactionModel> {
       isRecurring: fields[7] as bool,
       recurringInterval: fields[8] as RecurringInterval?,
       receiptImagePath: fields[9] as String?,
+      affectsBalance: fields[10] == null ? true : fields[10] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, TransactionModel obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -53,7 +54,9 @@ class TransactionModelAdapter extends TypeAdapter<TransactionModel> {
       ..writeByte(8)
       ..write(obj.recurringInterval)
       ..writeByte(9)
-      ..write(obj.receiptImagePath);
+      ..write(obj.receiptImagePath)
+      ..writeByte(10)
+      ..write(obj.affectsBalance);
   }
 
   @override

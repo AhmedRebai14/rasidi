@@ -740,6 +740,50 @@ class AppTranslations {
       'ar': 'الرجاء اختيار تصنيف',
       'fr': 'Veuillez sélectionner une catégorie',
     },
+
+    // ── Off-Budget / Affects Balance ──────────────────────────────
+    'affects_balance': {
+      'en': 'Affects Balance',
+      'ar': 'يؤثر على الرصيد',
+      'fr': 'Affecte le solde',
+    },
+    'affects_balance_desc': {
+      'en': 'Will be deducted from your remaining balance',
+      'ar': 'سيُخصم من رصيدك المتبقي',
+      'fr': 'Sera déduit de votre solde restant',
+    },
+    'off_budget': {
+      'en': 'Off-Budget (tracking only)',
+      'ar': 'خارج الميزانية (تتبع فقط)',
+      'fr': 'Hors budget (suivi uniquement)',
+    },
+    'off_budget_desc': {
+      'en': "Paid via gift card or voucher. Won't affect your balance.",
+      'ar': 'مدفوع ببطاقة هدية أو قسيمة. لن يؤثر على رصيدك.',
+      'fr': "Payé par carte cadeau ou bon. N'affectera pas votre solde.",
+    },
+    'off_budget_badge': {
+      'en': '🎁 off',
+      'ar': '🎁 خارج',
+      'fr': '🎁 hors',
+    },
+    'off_budget_label': {
+      'en': 'off-budget tracked',
+      'ar': 'خارج الميزانية',
+      'fr': 'hors budget suivi',
+    },
+    'off_budget_filter': {
+      'en': 'Off-Budget',
+      'ar': 'خارج الميزانية',
+      'fr': 'Hors budget',
+    },
+
+    // ── Description field ─────────────────────────────────────────
+    'desc_hint_multiline': {
+      'en': 'Add notes, remarks, or any extra details...',
+      'ar': 'أضف ملاحظات أو تفاصيل إضافية...',
+      'fr': 'Ajoutez des notes ou détails supplémentaires...',
+    },
   };
 
   /// Get a translated string by key. Falls back to English then to key itself.

@@ -56,7 +56,7 @@ class _TransactionListScreenState
     double totalIncome =
         allForSession.where((t) => t.isIncome).fold(0.0, (s, t) => s + t.amount);
     double totalExpenses =
-        allForSession.where((t) => t.isExpense).fold(0.0, (s, t) => s + t.amount);
+        allForSession.where((t) => t.isExpense && t.affectsBalance).fold(0.0, (s, t) => s + t.amount);
     double remaining = session.initialBalance + totalIncome - totalExpenses;
 
     // Group by date
@@ -218,23 +218,35 @@ class _TransactionListScreenState
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Row(
         children: [
-          ...TransactionFilter.values.map((f) {
-            final isActive = filter == f;
-            return Padding(
-              padding: const EdgeInsets.only(right: 6),
-              child: ChoiceChip(
-                label: Text(f.name.toUpperCase()),
-                selected: isActive,
-                onSelected: (_) =>
-                    ref.read(transactionFilterProvider.notifier).state = f,
-                selectedColor: AppColors.primary.withAlpha(51),
-                labelStyle: AppTextStyles.chip.copyWith(
-                  color: isActive ? AppColors.primary : AppColors.textSecondary,
-                ),
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: TransactionFilter.values.map((f) {
+                  final isActive = filter == f;
+                  final label = switch (f) {
+                    TransactionFilter.all => t('transactions_all'),
+                    TransactionFilter.income => t('transactions_income'),
+                    TransactionFilter.expense => t('transactions_expense'),
+                    TransactionFilter.offBudget => t('off_budget_filter'),
+                  };
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 6),
+                    child: ChoiceChip(
+                      label: Text(label),
+                      selected: isActive,
+                      onSelected: (_) =>
+                          ref.read(transactionFilterProvider.notifier).state = f,
+                      selectedColor: AppColors.primary.withAlpha(51),
+                      labelStyle: AppTextStyles.chip.copyWith(
+                        color: isActive ? AppColors.primary : AppColors.textSecondary,
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
-            );
-          }),
-          const Spacer(),
+            ),
+          ),
           PopupMenuButton<TransactionSort>(
             icon: const Icon(Icons.sort, size: 20),
             onSelected: (v) =>

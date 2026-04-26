@@ -115,10 +115,61 @@ class _ThisMonthTab extends ConsumerWidget {
         children: [
           _kpiCard('analytics_remaining', CurrencyFormatter.formatClean(analytics.remainingBalance, symbol: currency), AppColors.primary),
           _kpiCard('income', CurrencyFormatter.formatClean(analytics.totalIncome, symbol: currency), AppColors.incomeGreen),
-          _kpiCard('expense', CurrencyFormatter.formatClean(analytics.totalExpenses, symbol: currency), AppColors.expenseRed),
+          _expenseKpiCard(analytics, currency),
           _kpiCard('analytics_daily_avg', CurrencyFormatter.formatClean(analytics.dailyAverage, symbol: currency), AppColors.warning),
           _kpiCard('projected_balance', CurrencyFormatter.formatClean(analytics.projectedBalance, symbol: currency), healthColor),
           _kpiCard('tx_count', '${analytics.transactionCount}', AppColors.secondary),
+        ],
+      ),
+    );
+  }
+
+  Widget _expenseKpiCard(AnalyticsData analytics, String currency) {
+    return Container(
+      width: 130,
+      margin: const EdgeInsets.only(right: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withAlpha(10), blurRadius: 6, offset: const Offset(0, 2))
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Consumer(
+            builder: (context, ref, _) {
+              final t = ref.watch(tProvider);
+              return Text(t('expense'), style: AppTextStyles.kpiLabel);
+            },
+          ),
+          const SizedBox(height: 6),
+          Text(
+            CurrencyFormatter.formatClean(analytics.totalExpenses, symbol: currency),
+            style: AppTextStyles.kpiValue.copyWith(color: AppColors.expenseRed, fontSize: 16),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          if (analytics.totalOffBudget > 0) ...[
+            const SizedBox(height: 4),
+            Consumer(
+              builder: (context, ref, _) {
+                final t = ref.watch(tProvider);
+                return Text(
+                  '+ ${CurrencyFormatter.formatClean(analytics.totalOffBudget, symbol: currency)} ${t('off_budget_label')}',
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: AppColors.incomeGreen,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                );
+              },
+            ),
+          ],
         ],
       ),
     );

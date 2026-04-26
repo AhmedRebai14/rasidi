@@ -8,7 +8,12 @@ import '../../transactions/providers/transaction_providers.dart';
 /// Computed analytics data for a session
 class AnalyticsData {
   final double totalIncome;
+  /// Balance-affecting expenses only (used for remaining balance)
   final double totalExpenses;
+  /// ALL expenses including off-budget (used for pie chart / category display)
+  final double totalExpensesTracked;
+  /// Off-budget amount only
+  final double totalOffBudget;
   final double remainingBalance;
   final double initialBalance;
   final double dailyAverage;
@@ -23,6 +28,8 @@ class AnalyticsData {
   const AnalyticsData({
     this.totalIncome = 0,
     this.totalExpenses = 0,
+    this.totalExpensesTracked = 0,
+    this.totalOffBudget = 0,
     this.remainingBalance = 0,
     this.initialBalance = 0,
     this.dailyAverage = 0,
@@ -47,7 +54,9 @@ final analyticsProvider = Provider<AnalyticsData>((ref) {
 
   // Aggregate totals
   double totalIncome = 0;
-  double totalExpenses = 0;
+  double totalExpenses = 0;        // balance-affecting only
+  double totalExpensesTracked = 0; // all expenses (including off-budget)
+  double totalOffBudget = 0;       // off-budget amount
   final Map<String, double> expensesByCategory = {};
   final Map<String, double> incomeByCategory = {};
   final Map<String, double> dailySpendingByDay = {};
@@ -58,14 +67,22 @@ final analyticsProvider = Provider<AnalyticsData>((ref) {
       incomeByCategory[tx.categoryId] =
           (incomeByCategory[tx.categoryId] ?? 0) + tx.amount;
     } else {
-      totalExpenses += tx.amount;
+      // ALL expenses contribute to category totals and tracked total
+      totalExpensesTracked += tx.amount;
       expensesByCategory[tx.categoryId] =
           (expensesByCategory[tx.categoryId] ?? 0) + tx.amount;
 
-      // Daily spending aggregation — keyed by day number
+      // Daily spending aggregation — keyed by day number (all expenses)
       final dayKey = tx.date.day.toString();
       dailySpendingByDay[dayKey] =
           (dailySpendingByDay[dayKey] ?? 0) + tx.amount;
+
+      // Only balance-affecting expenses reduce the balance
+      if (tx.affectsBalance) {
+        totalExpenses += tx.amount;
+      } else {
+        totalOffBudget += tx.amount;
+      }
     }
   }
 
@@ -98,7 +115,8 @@ final analyticsProvider = Provider<AnalyticsData>((ref) {
   for (final tx in sortedTx) {
     if (tx.isIncome) {
       runningBalance += tx.amount;
-    } else {
+    } else if (tx.affectsBalance) {
+      // Only balance-affecting expenses move the running balance
       runningBalance -= tx.amount;
     }
     balanceSpots.add(FlSpot(tx.date.day.toDouble(), runningBalance));
@@ -124,6 +142,8 @@ final analyticsProvider = Provider<AnalyticsData>((ref) {
   return AnalyticsData(
     totalIncome: totalIncome,
     totalExpenses: totalExpenses,
+    totalExpensesTracked: totalExpensesTracked,
+    totalOffBudget: totalOffBudget,
     remainingBalance: remaining,
     initialBalance: session.initialBalance,
     dailyAverage: dailyAvg,

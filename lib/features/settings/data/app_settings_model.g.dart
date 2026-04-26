@@ -24,7 +24,7 @@ class AppSettingsModelAdapter extends TypeAdapter<AppSettingsModel> {
       pin: fields[4] as String?,
       isBiometricEnabled: fields[5] as bool,
       lastCategoryUsedId: fields[6] as String?,
-      lockTimeoutSeconds: fields[7] as int? ?? 30,
+      lockTimeoutSeconds: fields[7] as int,
     );
   }
 

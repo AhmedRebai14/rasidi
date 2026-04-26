@@ -66,11 +66,13 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet>
   final _amountController = TextEditingController(text: '');
   final _amountFocusNode = FocusNode();
   final _noteController = TextEditingController();
+  final _noteFocusNode = FocusNode();
   bool _isRecurring = false;
   RecurringInterval _recurringInterval = RecurringInterval.monthly;
   String? _receiptImagePath;
   bool _isSaving = false;
   bool _showCategoryError = false;
+  bool _affectsBalance = true;
 
   // ── Animation ─────────────────────────────────────────────────────────
   late AnimationController _warningAnimCtrl;
@@ -97,6 +99,7 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet>
       _recurringInterval =
           existing.recurringInterval ?? RecurringInterval.monthly;
       _receiptImagePath = existing.receiptImagePath;
+      _affectsBalance = existing.affectsBalance;
     } else {
       _type = widget.initialType;
     }
@@ -138,6 +141,7 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet>
     _amountController.dispose();
     _amountFocusNode.dispose();
     _noteController.dispose();
+    _noteFocusNode.dispose();
     _warningAnimCtrl.dispose();
     super.dispose();
   }
@@ -313,6 +317,7 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet>
         isRecurring: _isRecurring,
         recurringInterval: _isRecurring ? _recurringInterval : null,
         receiptImagePath: _receiptImagePath,
+        affectsBalance: _type == TransactionType.income ? true : _affectsBalance,
       );
 
       final bool success;
@@ -402,6 +407,12 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet>
                   _buildCategoryRow(t),
 
                   const Divider(height: 1),
+
+                  // Off-budget toggle (expense only)
+                  if (_type == TransactionType.expense) ...[
+                    _buildAffectsBalanceToggle(t),
+                    const Divider(height: 1),
+                  ],
 
                   // Description field
                   _buildDescriptionField(t),
@@ -526,6 +537,7 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet>
           _selectedCategoryId = null;
           _showCategoryError = false;
           _warningAnimCtrl.reverse();
+          if (type == TransactionType.income) _affectsBalance = true;
         });
       },
       child: AnimatedContainer(
@@ -733,32 +745,155 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet>
     );
   }
 
+  Widget _buildAffectsBalanceToggle(String Function(String) t) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        decoration: BoxDecoration(
+          color: _affectsBalance
+              ? (isDark ? AppColors.darkSurface : AppColors.lightSurface)
+              : (isDark
+                  ? const Color(0xFF1A2A1A)
+                  : AppColors.incomeGreen.withAlpha(15)),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: _affectsBalance
+                ? Theme.of(context).dividerColor
+                : AppColors.incomeGreen.withAlpha(100),
+            width: 1.5,
+          ),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Text(
+              _affectsBalance ? '💳' : '🎁',
+              style: const TextStyle(fontSize: 20),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _affectsBalance
+                        ? t('affects_balance')
+                        : t('off_budget'),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    _affectsBalance
+                        ? t('affects_balance_desc')
+                        : t('off_budget_desc'),
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withAlpha(128),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Switch.adaptive(
+              value: _affectsBalance,
+              onChanged: (val) => setState(() => _affectsBalance = val),
+              activeColor: AppColors.expenseRed,
+              inactiveThumbColor: AppColors.incomeGreen,
+              inactiveTrackColor: AppColors.incomeGreen.withAlpha(77),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildDescriptionField(String Function(String) t) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentColor = _type == TransactionType.expense
+        ? AppColors.expenseRed
+        : AppColors.incomeGreen;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Icon(Icons.notes, color: AppColors.textSecondary, size: 20),
-          const SizedBox(width: 12),
-          Expanded(
-            child: TextField(
-              controller: _noteController,
-              maxLength: 100,
-              decoration: InputDecoration(
-                hintText: t('desc_hint'),
-                hintStyle: AppTextStyles.caption,
-                border: InputBorder.none,
-                counterText: '',
-                isDense: true,
-                contentPadding: EdgeInsets.zero,
+          TextField(
+            controller: _noteController,
+            focusNode: _noteFocusNode,
+            keyboardType: TextInputType.multiline,
+            textCapitalization: TextCapitalization.sentences,
+            textInputAction: TextInputAction.newline,
+            maxLines: 5,
+            minLines: 3,
+            maxLength: 300,
+            maxLengthEnforcement: MaxLengthEnforcement.enforced,
+            buildCounter: (_, {required currentLength, required isFocused, maxLength}) => null,
+            onChanged: (val) => setState(() {}),
+            style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).colorScheme.onSurface,
+              height: 1.5,
+            ),
+            decoration: InputDecoration(
+              hintText: t('desc_hint_multiline'),
+              hintStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface.withAlpha(89),
+                fontSize: 13,
+                height: 1.5,
               ),
-              style: AppTextStyles.body,
-              onChanged: (_) => setState(() {}),
+              prefixIcon: Icon(
+                Icons.notes_rounded,
+                color: Theme.of(context).colorScheme.onSurface.withAlpha(100),
+                size: 20,
+              ),
+              prefixIconConstraints: const BoxConstraints(
+                minWidth: 40,
+                minHeight: 0,
+              ),
+              filled: true,
+              fillColor: isDark
+                  ? AppColors.darkSurface
+                  : Theme.of(context).colorScheme.surface,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(
+                  color: Theme.of(context).dividerColor,
+                  width: 1.5,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(color: accentColor, width: 1.5),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 14,
+              ),
             ),
           ),
+          const SizedBox(height: 4),
           Text(
-            '${_noteController.text.length}/100',
-            style: AppTextStyles.caption.copyWith(fontSize: 11),
+            '${_noteController.text.length}/300',
+            style: TextStyle(
+              fontSize: 10,
+              color: _noteController.text.length > 240
+                  ? AppColors.warning
+                  : Theme.of(context).colorScheme.onSurface.withAlpha(76),
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),

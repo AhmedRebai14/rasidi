@@ -4,7 +4,7 @@ import '../../../core/constants/hive_boxes.dart';
 import '../data/transaction_model.dart';
 
 /// Filter state for the transaction list
-enum TransactionFilter { all, income, expense }
+enum TransactionFilter { all, income, expense, offBudget }
 
 /// Sort options for the transaction list
 enum TransactionSort { newest, oldest, highest }
@@ -51,6 +51,7 @@ class TransactionNotifier extends StateNotifier<List<TransactionModel>> {
       existing.note = updated.note;
       existing.isRecurring = updated.isRecurring;
       existing.recurringInterval = updated.recurringInterval;
+      existing.affectsBalance = updated.affectsBalance;
       await existing.save();
       _load();
       return true;
@@ -122,6 +123,8 @@ final filteredTransactionsProvider =
     filtered = filtered.where((t) => t.isIncome).toList();
   } else if (filter == TransactionFilter.expense) {
     filtered = filtered.where((t) => t.isExpense).toList();
+  } else if (filter == TransactionFilter.offBudget) {
+    filtered = filtered.where((t) => !t.affectsBalance).toList();
   }
 
   // Apply search

@@ -55,6 +55,9 @@ class TransactionModel extends HiveObject {
   @HiveField(9)
   String? receiptImagePath;
 
+  @HiveField(10)
+  bool affectsBalance;
+
   TransactionModel({
     required this.id,
     required this.amount,
@@ -66,6 +69,7 @@ class TransactionModel extends HiveObject {
     this.isRecurring = false,
     this.recurringInterval,
     this.receiptImagePath,
+    this.affectsBalance = true,
   });
 
   bool get isExpense => type == TransactionType.expense;
@@ -80,6 +84,7 @@ class TransactionModel extends HiveObject {
     bool? isRecurring,
     RecurringInterval? recurringInterval,
     String? receiptImagePath,
+    bool? affectsBalance,
   }) {
     return TransactionModel(
       id: id,
@@ -92,6 +97,7 @@ class TransactionModel extends HiveObject {
       isRecurring: isRecurring ?? this.isRecurring,
       recurringInterval: recurringInterval ?? this.recurringInterval,
       receiptImagePath: receiptImagePath ?? this.receiptImagePath,
+      affectsBalance: affectsBalance ?? this.affectsBalance,
     );
   }
 }

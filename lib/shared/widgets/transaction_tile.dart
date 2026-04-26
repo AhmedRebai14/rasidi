@@ -105,7 +105,7 @@ class TransactionTile extends ConsumerWidget {
                         : AppDateUtils.formatDay(transaction.date),
                     style:
                         AppTextStyles.caption.copyWith(color: textSecondary),
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
@@ -116,12 +116,41 @@ class TransactionTile extends ConsumerWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  '${isExpense ? '-' : '+'}${CurrencyFormatter.formatClean(transaction.amount, symbol: currency)}',
-                  style: (isExpense
-                          ? AppTextStyles.amountExpense
-                          : AppTextStyles.amountIncome)
-                      .copyWith(fontSize: 15),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '${isExpense ? '-' : '+'}${CurrencyFormatter.formatClean(transaction.amount, symbol: currency)}',
+                      style: (isExpense
+                              ? AppTextStyles.amountExpense
+                              : AppTextStyles.amountIncome)
+                          .copyWith(fontSize: 15),
+                    ),
+                    if (isExpense && !transaction.affectsBalance) ...[
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: AppColors.incomeGreen.withAlpha(38),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: AppColors.incomeGreen.withAlpha(100),
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          t('off_budget_badge'),
+                          style: const TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.incomeGreen,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
                 const SizedBox(height: 2),
                 Text(
