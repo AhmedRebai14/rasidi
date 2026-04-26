@@ -25,6 +25,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   String _selectedCurrency = 'DA';
   final TextEditingController _customCurrencyController =
       TextEditingController();
+  bool _completing = false; // guard against double-tap
 
   @override
   void dispose() {
@@ -45,6 +46,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Future<void> _completeOnboarding() async {
+    if (_completing) return;
+    _completing = true;
     // Set currency in settings
     final currency = _selectedCurrency == 'custom'
         ? _customCurrencyController.text.trim().isNotEmpty

@@ -365,6 +365,31 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet>
     }
   }
 
+  Future<void> _confirmDelete(String Function(String) t) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(t('delete')),
+        content: Text(t('transactions_delete_confirm')),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(t('cancel')),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(foregroundColor: AppColors.expenseRed),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(t('delete')),
+          ),
+        ],
+      ),
+    );
+    if (confirm != true || !mounted) return;
+    final id = widget.existingTransaction!.id;
+    await ref.read(transactionsProvider.notifier).deleteTransaction(id);
+    if (mounted) Navigator.pop(context);
+  }
+
   // ── Build ─────────────────────────────────────────────────────────────────
 
   @override
@@ -492,6 +517,15 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet>
                     ),
                   ),
                 ),
+                if (isEditing)
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline_rounded),
+                    color: AppColors.expenseRed,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    tooltip: t('delete'),
+                    onPressed: () => _confirmDelete(t),
+                  ),
               ],
             ),
           ),

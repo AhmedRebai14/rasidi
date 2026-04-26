@@ -8,6 +8,8 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/l10n/locale_provider.dart';
 import '../../settings/providers/settings_providers.dart';
 import '../../../shared/services/hive_service.dart';
+// setAppLocked drives GoRouter's ValueNotifier-based redirect
+import '../../../core/router/app_router.dart' show setAppLocked;
 
 // ── Lock state provider ────────────────────────────────────────────────────
 
@@ -99,8 +101,9 @@ class _LockScreenState extends ConsumerState<LockScreen>
   void _handleUnlock() {
     final storedPin = ref.read(settingsProvider).pin ?? '';
     if (_enteredPin == storedPin) {
-      // ✅ Correct
+      // ✅ Correct — clear lock state and navigate home
       HapticFeedback.mediumImpact();
+      setAppLocked(false); // tell GoRouter to lift the /lock redirect
       ref.read(appLockedProvider.notifier).state = false;
       context.go('/');
     } else {
@@ -204,9 +207,13 @@ class _LockScreenState extends ConsumerState<LockScreen>
       subtitle = t('enter_pin');
     }
 
-    return Scaffold(
-      backgroundColor: bgColor,
-      body: SafeArea(
+    return PopScope(
+      // In unlock mode the back button must be blocked — user cannot escape the lock screen.
+      // In isSettingPin mode (shown from Settings) we allow pop so the sheet can close.
+      canPop: widget.isSettingPin,
+      child: Scaffold(
+        backgroundColor: bgColor,
+        body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Column(
@@ -325,12 +332,13 @@ class _LockScreenState extends ConsumerState<LockScreen>
                 ),
 
               const Spacer(flex: 1),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+            ],         // Column.children
+          ),           // Column
+        ),             // Padding
+      ),               // SafeArea
+    ),                 // Scaffold  ← child of PopScope
+  );                   // PopScope
+  }                    // end build
 
   Widget _buildNumpad(bool isDark) {
     const rows = [

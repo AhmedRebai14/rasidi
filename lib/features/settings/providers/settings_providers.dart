@@ -46,6 +46,23 @@ class SettingsNotifier extends StateNotifier<AppSettingsModel> {
     await _save();
   }
 
+  Future<void> enablePin(String pin) async {
+    state = state.copyWith(isPinEnabled: true, pin: pin);
+    await _save();
+  }
+
+  Future<void> disablePin() async {
+    state = state.copyWith(isPinEnabled: false, pin: null, isBiometricEnabled: false);
+    await _save();
+  }
+
+  Future<void> changePin(String newPin) async {
+    state = state.copyWith(pin: newPin);
+    await _save();
+  }
+
+  bool verifyPin(String input) => state.pin == input;
+
   Future<void> setBiometric(bool value) async {
     state = state.copyWith(isBiometricEnabled: value);
     await _save();

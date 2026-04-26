@@ -7,6 +7,7 @@ import '../../../core/l10n/locale_provider.dart';
 import '../providers/settings_providers.dart';
 import '../../../shared/services/hive_service.dart';
 import '../../../shared/widgets/confirmation_dialog.dart';
+import '../../../shared/widgets/pin_pad.dart';
 
 /// Full settings screen with preferences, security, data, and about sections
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -17,12 +18,10 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  final _pinController = TextEditingController();
   final _currencyController = TextEditingController();
 
   @override
   void dispose() {
-    _pinController.dispose();
     _currencyController.dispose();
     super.dispose();
   }
@@ -82,9 +81,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               if (v) {
                 await _showSetPinDialog(context);
               } else {
-                await ref
-                    .read(settingsProvider.notifier)
-                    .setPinEnabled(false);
+                await _showDisablePinSheet(context);
               }
             },
           ),
@@ -92,7 +89,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ListTile(
               leading: const Icon(Icons.dialpad),
               title: Text(t('settings_change_pin')),
-              onTap: () => _showSetPinDialog(context),
+              onTap: () => _showChangePinSheet(context),
             ),
           if (settings.isPinEnabled)
             ListTile(
@@ -264,39 +261,119 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
-  Future<void> _showSetPinDialog(BuildContext context) async {
-    _pinController.clear();
-    await showDialog(
+  /// Shows a PinPad bottom sheet. Returns the entered PIN or null if dismissed.
+  Future<String?> _showPinSheet(BuildContext context, String title) async {
+    String? result;
+    await showModalBottomSheet<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Set PIN'),
-        content: TextField(
-          controller: _pinController,
-          keyboardType: TextInputType.number,
-          maxLength: AppConstants.pinLength,
-          obscureText: true,
-          decoration: const InputDecoration(
-              hintText: '4-digit PIN'),
-        ),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () {
-              if (_pinController.text.length ==
-                  AppConstants.pinLength) {
-                ref.read(settingsProvider.notifier).setPinEnabled(
-                    true,
-                    pin: _pinController.text);
-                Navigator.pop(ctx);
-              }
-            },
-            child: const Text('Set PIN'),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
-        ],
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40, height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade400,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              PinPad(
+                title: title,
+                onComplete: (pin) {
+                  result = pin;
+                  Navigator.of(ctx).pop();
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
       ),
     );
+    return result;
+  }
+
+  Future<void> _showSetPinDialog(BuildContext context) async {
+    final t = ref.read(tProvider);
+    // Step 1: create
+    final pin1 = await _showPinSheet(context, t('create_pin'));
+    if (pin1 == null || !mounted) return;
+    // Step 2: confirm
+    final pin2 = await _showPinSheet(context, t('confirm_pin'));
+    if (pin2 == null || !mounted) return;
+    if (pin1 == pin2) {
+      await ref.read(settingsProvider.notifier).enablePin(pin1);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(t('pin_set_success'))),
+        );
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(t('pin_no_match')), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  Future<void> _showDisablePinSheet(BuildContext context) async {
+    final t = ref.read(tProvider);
+    final pin = await _showPinSheet(context, t('disable_lock_verify'));
+    if (pin == null || !mounted) return;
+    if (ref.read(settingsProvider.notifier).verifyPin(pin)) {
+      await ref.read(settingsProvider.notifier).disablePin();
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(t('wrong_pin')), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  Future<void> _showChangePinSheet(BuildContext context) async {
+    final t = ref.read(tProvider);
+    // Step 1: verify current
+    final current = await _showPinSheet(context, t('current_pin'));
+    if (current == null || !mounted) return;
+    if (!ref.read(settingsProvider.notifier).verifyPin(current)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(t('wrong_pin')), backgroundColor: Colors.red),
+        );
+      }
+      return;
+    }
+    // Step 2: new pin
+    final pin1 = await _showPinSheet(context, t('new_pin'));
+    if (pin1 == null || !mounted) return;
+    // Step 3: confirm new pin
+    final pin2 = await _showPinSheet(context, t('confirm_pin'));
+    if (pin2 == null || !mounted) return;
+    if (pin1 == pin2) {
+      await ref.read(settingsProvider.notifier).changePin(pin1);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(t('pin_changed_success'))),
+        );
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(t('pin_no_match')), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 
   void _confirmClearData(BuildContext context) {

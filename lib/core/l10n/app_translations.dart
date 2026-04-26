@@ -729,6 +729,37 @@ class AppTranslations {
       'fr': 'Utiliser la biométrie pour déverrouiller',
     },
 
+    'create_pin': {
+      'en': 'Create a PIN',
+      'ar': 'أنشئ رمزاً سرياً',
+      'fr': 'Créer un code PIN',
+    },
+    'pin_no_match': {
+      'en': "PINs don't match. Try again.",
+      'ar': 'الرمزان غير متطابقان. حاول مجدداً.',
+      'fr': 'Les codes ne correspondent pas.',
+    },
+    'pin_changed_success': {
+      'en': 'PIN changed successfully ✓',
+      'ar': 'تم تغيير الرمز بنجاح ✓',
+      'fr': 'Code PIN modifié avec succès ✓',
+    },
+    'current_pin': {
+      'en': 'Enter current PIN',
+      'ar': 'أدخل الرمز الحالي',
+      'fr': 'Entrer le code actuel',
+    },
+    'new_pin': {
+      'en': 'Enter new PIN',
+      'ar': 'أدخل الرمز الجديد',
+      'fr': 'Entrer le nouveau code',
+    },
+    'disable_lock_verify': {
+      'en': 'Enter PIN to disable lock',
+      'ar': 'أدخل الرمز لتعطيل القفل',
+      'fr': 'Entrer le code pour désactiver',
+    },
+
     // ── Common errors ─────────────────────────────────────────────
     'error_enter_amount': {
       'en': 'Please enter an amount',

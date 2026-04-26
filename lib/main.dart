@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:hive/hive.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/constants/hive_boxes.dart';
+import 'features/settings/data/app_settings_model.dart';
 import 'features/settings/providers/settings_providers.dart';
 import 'features/lock/screens/lock_screen.dart';
 import 'shared/services/hive_service.dart';
@@ -11,6 +14,15 @@ import 'shared/services/recurring_transaction_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await HiveService.init();
+
+  // ── Pre-lock BEFORE runApp so GoRouter's initial redirect sees the lock ──
+  // This prevents a flash of the home screen on cold start when PIN is enabled.
+  final settingsBox = Hive.box<AppSettingsModel>(HiveBoxes.settings);
+  final savedSettings = settingsBox.get('settings') ?? AppSettingsModel();
+  if (savedSettings.isPinEnabled && (savedSettings.pin ?? '').isNotEmpty) {
+    setAppLocked(true);
+  }
+
   await RecurringTransactionService.processRecurring();
   runApp(const ProviderScope(child: RasidiApp()));
 }
@@ -24,16 +36,17 @@ class RasidiApp extends ConsumerStatefulWidget {
 
 class _RasidiAppState extends ConsumerState<RasidiApp>
     with WidgetsBindingObserver {
-  DateTime? _lastPausedAt;
+  /// Set to true when the app moves to background, cleared on resume.
+  bool _didGoToBackground = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // Lock on startup if PIN is enabled
+    // Keep Riverpod appLockedProvider in sync with the ValueNotifier
+    // (used by any UI that reads the Riverpod provider directly).
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final settings = ref.read(settingsProvider);
-      if (settings.isPinEnabled) {
+      if (isAppLocked) {
         ref.read(appLockedProvider.notifier).state = true;
       }
     });
@@ -48,22 +61,19 @@ class _RasidiAppState extends ConsumerState<RasidiApp>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final settings = ref.read(settingsProvider);
-    if (!settings.isPinEnabled) return;
+    // Only act when PIN lock is actually enabled and set
+    if (!settings.isPinEnabled || (settings.pin ?? '').isEmpty) return;
 
     if (state == AppLifecycleState.paused) {
-      _lastPausedAt = DateTime.now();
+      _didGoToBackground = true;
     }
 
-    if (state == AppLifecycleState.resumed) {
-      if (_lastPausedAt != null) {
-        final elapsed = DateTime.now().difference(_lastPausedAt!);
-        if (elapsed.inSeconds >= settings.lockTimeoutSeconds) {
-          ref.read(appLockedProvider.notifier).state = true;
-          final router = ref.read(appRouterProvider);
-          router.go('/lock');
-        }
-        _lastPausedAt = null;
-      }
+    if (state == AppLifecycleState.resumed && _didGoToBackground) {
+      _didGoToBackground = false;
+      // Lock immediately — setAppLocked updates ValueNotifier which
+      // GoRouter listens to via refreshListenable, no direct navigation needed.
+      setAppLocked(true);
+      ref.read(appLockedProvider.notifier).state = true;
     }
   }
 
