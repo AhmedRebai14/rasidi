@@ -18,6 +18,10 @@ import '../../session/providers/session_providers.dart';
 import '../../settings/providers/settings_providers.dart';
 import '../data/transaction_model.dart';
 import '../providers/transaction_providers.dart';
+import '../../../features/gamification/providers/user_stats_provider.dart';
+import '../../../features/goals/providers/challenges_provider.dart';
+import '../../../shared/widgets/xp_toast.dart';
+import '../../../shared/services/notification_service.dart';
 import '../../../core/utils/icon_resolver.dart';
 
 // ─── Entry point ────────────────────────────────────────────────────────────
@@ -331,6 +335,32 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet>
       }
 
       if (!success) throw Exception(t('err_save'));
+
+      // Award XP for new transaction (not edits)
+      if (!isEditing && mounted) {
+        final xpResult = await ref
+            .read(userStatsProvider.notifier)
+            .recordTransaction(hasReceipt: _receiptImagePath != null);
+        await NotificationService.instance.cancelStreakReminder();
+        if (mounted) showXPToast(context, xpResult);
+
+        // Update challenge progress
+        final challenges = ref.read(challengesProvider.notifier);
+        // 7-day daily logger challenge
+        await challenges.incrementProgress('log_streak_7');
+        // Receipt collector challenge (only if receipt was attached)
+        if (_receiptImagePath != null) {
+          await challenges.incrementProgress('add_receipt_5');
+        }
+        // No-spend challenge — reset if this is an expense
+        if (transaction.isExpense) {
+          await challenges.resetProgress('no_spend_day');
+        }
+        // No-spend week challenge: reset streak on any expense
+        if (_type == TransactionType.expense) {
+          await challenges.resetProgress('no_spend_day');
+        }
+      }
 
       // Save last used category
       await ref

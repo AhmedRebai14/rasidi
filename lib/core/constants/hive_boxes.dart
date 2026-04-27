@@ -7,6 +7,12 @@ class HiveBoxes {
   static const String categories = 'categories';
   static const String savings = 'savings';
   static const String settings = 'settings';
+
+  // ── New feature boxes ───────────────────────────────────────────────────
+  static const String insights = 'insights';
+  static const String goals = 'goals';
+  static const String challenges = 'challenges';
+  static const String userStats = 'user_stats';
 }
 
 /// Hive TypeAdapter typeIds

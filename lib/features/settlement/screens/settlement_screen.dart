@@ -14,6 +14,7 @@ import '../../settings/providers/settings_providers.dart';
 import '../../savings/data/saving_model.dart';
 import '../../savings/providers/savings_providers.dart';
 import 'package:uuid/uuid.dart';
+import '../../goals/providers/challenges_provider.dart';
 
 /// 3-step settlement flow for closing a monthly session
 class SettlementScreen extends ConsumerStatefulWidget {
@@ -442,6 +443,19 @@ class _SettlementScreenState extends ConsumerState<SettlementScreen> {
           note: 'Settlement from ${AppDateUtils.getMonthName(session.month, ref.read(settingsProvider).language)}',
         );
         await ref.read(savingsProvider.notifier).addSaving(saving);
+      }
+
+      // Challenge progress at settlement
+      final challenges = ref.read(challengesProvider.notifier);
+      final stayedUnderBudget = finalBalance >= 0;
+      if (stayedUnderBudget) {
+        // Beat last month challenge — completes on first under-budget settlement
+        await challenges.updateProgress(id: 'beat_last_month', progress: 1);
+        // 3-month positive challenge — needs 3 consecutive under-budget months
+        await challenges.incrementProgress('three_month_positive');
+      } else {
+        // Broke budget — reset the 3-month streak
+        await challenges.resetProgress('three_month_positive');
       }
 
       // Navigate to new session or home

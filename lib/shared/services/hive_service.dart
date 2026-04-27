@@ -5,6 +5,10 @@ import '../../features/transactions/data/transaction_model.dart';
 import '../../features/categories/data/category_model.dart';
 import '../../features/savings/data/saving_model.dart';
 import '../../features/settings/data/app_settings_model.dart';
+import '../../features/insights/data/insight_model.dart';
+import '../../features/goals/data/saving_goal_model.dart';
+import '../../features/goals/data/challenge_model.dart';
+import '../../features/gamification/data/user_stats_model.dart';
 
 /// Central service to initialize and access Hive boxes
 class HiveService {
@@ -15,6 +19,9 @@ class HiveService {
   static Box<CategoryModel> get categories => Hive.box<CategoryModel>(HiveBoxes.categories);
   static Box<SavingModel> get savings => Hive.box<SavingModel>(HiveBoxes.savings);
   static Box<AppSettingsModel> get settingsBox => Hive.box<AppSettingsModel>(HiveBoxes.settings);
+  static Box<SavingGoalModel> get goals => Hive.box<SavingGoalModel>(HiveBoxes.goals);
+  static Box<ChallengeModel> get challenges => Hive.box<ChallengeModel>(HiveBoxes.challenges);
+  static Box<UserStatsModel> get userStats => Hive.box<UserStatsModel>(HiveBoxes.userStats);
 
   /// Initialize Hive and register all adapters, then open boxes
   static Future<void> init() async {
@@ -32,6 +39,15 @@ class HiveService {
     Hive.registerAdapter(CategoryModelAdapter());
     Hive.registerAdapter(SavingModelAdapter());
     Hive.registerAdapter(AppSettingsModelAdapter());
+    // New feature adapters
+    Hive.registerAdapter(InsightTypeAdapter());
+    Hive.registerAdapter(InsightSentimentAdapter());
+    Hive.registerAdapter(InsightModelAdapter());
+    Hive.registerAdapter(SavingGoalModelAdapter());
+    Hive.registerAdapter(ChallengeTypeAdapter());
+    Hive.registerAdapter(ChallengeStatusAdapter());
+    Hive.registerAdapter(ChallengeModelAdapter());
+    Hive.registerAdapter(UserStatsModelAdapter());
   }
 
   static Future<void> _openBoxes() async {
@@ -40,6 +56,11 @@ class HiveService {
     await Hive.openBox<CategoryModel>(HiveBoxes.categories);
     await Hive.openBox<SavingModel>(HiveBoxes.savings);
     await Hive.openBox<AppSettingsModel>(HiveBoxes.settings);
+    // New boxes
+    await Hive.openBox(HiveBoxes.insights);           // dynamic box
+    await Hive.openBox<SavingGoalModel>(HiveBoxes.goals);
+    await Hive.openBox<ChallengeModel>(HiveBoxes.challenges);
+    await Hive.openBox<UserStatsModel>(HiveBoxes.userStats);
   }
 
   /// Clear ALL data — used in settings
@@ -49,6 +70,10 @@ class HiveService {
     await categories.clear();
     await savings.clear();
     await settingsBox.clear();
+    await goals.clear();
+    await challenges.clear();
+    await userStats.clear();
+    await Hive.box(HiveBoxes.insights).clear();
   }
 
   /// Get app settings (creates default if not present)

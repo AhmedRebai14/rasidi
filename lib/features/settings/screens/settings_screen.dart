@@ -131,6 +131,70 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
 
           const Divider(),
+          // ── Notifications ────────────────────────────────
+          _sectionHeader(t('settings_notifications')),
+          SwitchListTile(
+            secondary: const Icon(Icons.notifications_outlined),
+            title: Text(t('notif_setting_master')),
+            value: settings.notificationsEnabled,
+            onChanged: (v) => ref.read(settingsProvider.notifier).setNotificationsEnabled(v),
+          ),
+          SwitchListTile(
+            secondary: Icon(Icons.lightbulb_outline, color: settings.notificationsEnabled ? null : Colors.grey),
+            title: Text(t('notif_setting_insights'), style: TextStyle(color: settings.notificationsEnabled ? null : Colors.grey)),
+            value: settings.notificationsEnabled && settings.notifyInsights,
+            onChanged: settings.notificationsEnabled ? (v) => ref.read(settingsProvider.notifier).setNotifyInsights(v) : null,
+          ),
+          SwitchListTile(
+            secondary: Icon(Icons.local_fire_department_outlined, color: settings.notificationsEnabled ? null : Colors.grey),
+            title: Text(t('notif_setting_streaks'), style: TextStyle(color: settings.notificationsEnabled ? null : Colors.grey)),
+            value: settings.notificationsEnabled && settings.notifyStreaks,
+            onChanged: settings.notificationsEnabled ? (v) => ref.read(settingsProvider.notifier).setNotifyStreaks(v) : null,
+          ),
+          SwitchListTile(
+            secondary: Icon(Icons.warning_amber_outlined, color: settings.notificationsEnabled ? null : Colors.grey),
+            title: Text(t('notif_setting_budget'), style: TextStyle(color: settings.notificationsEnabled ? null : Colors.grey)),
+            value: settings.notificationsEnabled && settings.notifyBudgetWarnings,
+            onChanged: settings.notificationsEnabled ? (v) => ref.read(settingsProvider.notifier).setNotifyBudgetWarnings(v) : null,
+          ),
+          SwitchListTile(
+            secondary: Icon(Icons.flag_outlined, color: settings.notificationsEnabled ? null : Colors.grey),
+            title: Text(t('notif_setting_goals'), style: TextStyle(color: settings.notificationsEnabled ? null : Colors.grey)),
+            value: settings.notificationsEnabled && settings.notifyGoalMilestones,
+            onChanged: settings.notificationsEnabled ? (v) => ref.read(settingsProvider.notifier).setNotifyGoalMilestones(v) : null,
+          ),
+          SwitchListTile(
+            secondary: Icon(Icons.emoji_events_outlined, color: settings.notificationsEnabled ? null : Colors.grey),
+            title: Text(t('notif_setting_challenges'), style: TextStyle(color: settings.notificationsEnabled ? null : Colors.grey)),
+            value: settings.notificationsEnabled && settings.notifyChallenges,
+            onChanged: settings.notificationsEnabled ? (v) => ref.read(settingsProvider.notifier).setNotifyChallenges(v) : null,
+          ),
+          SwitchListTile(
+            secondary: Icon(Icons.handshake_outlined, color: settings.notificationsEnabled ? null : Colors.grey),
+            title: Text(t('notif_setting_settlement'), style: TextStyle(color: settings.notificationsEnabled ? null : Colors.grey)),
+            value: settings.notificationsEnabled && settings.notifySettlement,
+            onChanged: settings.notificationsEnabled ? (v) => ref.read(settingsProvider.notifier).setNotifySettlement(v) : null,
+          ),
+          SwitchListTile(
+            secondary: Icon(Icons.calendar_today_outlined, color: settings.notificationsEnabled ? null : Colors.grey),
+            title: Text(t('notif_setting_weekly'), style: TextStyle(color: settings.notificationsEnabled ? null : Colors.grey)),
+            value: settings.notificationsEnabled && settings.notifyWeeklySummary,
+            onChanged: settings.notificationsEnabled ? (v) => ref.read(settingsProvider.notifier).setNotifyWeeklySummary(v) : null,
+          ),
+          SwitchListTile(
+            secondary: Icon(Icons.account_balance_wallet_outlined, color: settings.notificationsEnabled ? null : Colors.grey),
+            title: Text(t('notif_setting_balance'), style: TextStyle(color: settings.notificationsEnabled ? null : Colors.grey)),
+            value: settings.notificationsEnabled && settings.notifyBalanceAlerts,
+            onChanged: settings.notificationsEnabled ? (v) => ref.read(settingsProvider.notifier).setNotifyBalanceAlerts(v) : null,
+          ),
+          SwitchListTile(
+            secondary: Icon(Icons.celebration_outlined, color: settings.notificationsEnabled ? null : Colors.grey),
+            title: Text(t('notif_setting_motivational'), style: TextStyle(color: settings.notificationsEnabled ? null : Colors.grey)),
+            value: settings.notificationsEnabled && settings.notifyMotivational,
+            onChanged: settings.notificationsEnabled ? (v) => ref.read(settingsProvider.notifier).setNotifyMotivational(v) : null,
+          ),
+
+          const Divider(),
           // ── Data ────────────────────────────────
           _sectionHeader(t('settings_data')),
           ListTile(

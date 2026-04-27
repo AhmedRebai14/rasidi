@@ -78,6 +78,56 @@ class SettingsNotifier extends StateNotifier<AppSettingsModel> {
     await _save();
   }
 
+  Future<void> setNotificationsEnabled(bool v) async {
+    state = state.copyWith(notificationsEnabled: v);
+    await _save();
+  }
+
+  Future<void> setNotifyInsights(bool v) async {
+    state = state.copyWith(notifyInsights: v);
+    await _save();
+  }
+
+  Future<void> setNotifyStreaks(bool v) async {
+    state = state.copyWith(notifyStreaks: v);
+    await _save();
+  }
+
+  Future<void> setNotifyBudgetWarnings(bool v) async {
+    state = state.copyWith(notifyBudgetWarnings: v);
+    await _save();
+  }
+
+  Future<void> setNotifyGoalMilestones(bool v) async {
+    state = state.copyWith(notifyGoalMilestones: v);
+    await _save();
+  }
+
+  Future<void> setNotifyChallenges(bool v) async {
+    state = state.copyWith(notifyChallenges: v);
+    await _save();
+  }
+
+  Future<void> setNotifySettlement(bool v) async {
+    state = state.copyWith(notifySettlement: v);
+    await _save();
+  }
+
+  Future<void> setNotifyWeeklySummary(bool v) async {
+    state = state.copyWith(notifyWeeklySummary: v);
+    await _save();
+  }
+
+  Future<void> setNotifyBalanceAlerts(bool v) async {
+    state = state.copyWith(notifyBalanceAlerts: v);
+    await _save();
+  }
+
+  Future<void> setNotifyMotivational(bool v) async {
+    state = state.copyWith(notifyMotivational: v);
+    await _save();
+  }
+
   void refresh() => _load();
 }
 

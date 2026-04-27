@@ -13,6 +13,8 @@ import '../../features/savings/screens/savings_screen.dart';
 import '../../features/settings/screens/settings_screen.dart';
 import '../../features/settings/data/app_settings_model.dart';
 import '../../features/lock/screens/lock_screen.dart';
+import '../../features/goals/screens/goals_screen.dart';
+import '../../features/goals/data/saving_goal_model.dart';
 import '../../core/l10n/locale_provider.dart';
 import 'package:hive/hive.dart';
 import '../../core/constants/hive_boxes.dart';
@@ -44,7 +46,7 @@ class _AppShell extends ConsumerStatefulWidget {
 class _AppShellState extends ConsumerState<_AppShell> {
   int _currentIndex = 0;
 
-  static const _tabs = ['/', '/transactions', '/analytics', '/savings', '/settings'];
+  static const _tabs = ['/', '/transactions', '/goals', '/analytics', '/settings'];
 
   @override
   Widget build(BuildContext context) {
@@ -69,14 +71,14 @@ class _AppShellState extends ConsumerState<_AppShell> {
             label: t('nav_transactions'),
           ),
           NavigationDestination(
+            icon: const Icon(Icons.emoji_events_outlined),
+            selectedIcon: const Icon(Icons.emoji_events_rounded),
+            label: t('nav_goals'),
+          ),
+          NavigationDestination(
             icon: const Icon(Icons.bar_chart_outlined),
             selectedIcon: const Icon(Icons.bar_chart_rounded),
             label: t('nav_analytics'),
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.savings_outlined),
-            selectedIcon: const Icon(Icons.savings_rounded),
-            label: t('nav_savings'),
           ),
           NavigationDestination(
             icon: const Icon(Icons.settings_outlined),
@@ -146,6 +148,10 @@ GoRouter _buildRouter() => GoRouter(
               builder: (context, state) => const TransactionListScreen(),
             ),
             GoRoute(
+              path: '/goals',
+              builder: (context, state) => const GoalsScreen(),
+            ),
+            GoRoute(
               path: '/analytics',
               builder: (context, state) => const AnalyticsScreen(),
             ),
@@ -158,6 +164,13 @@ GoRouter _buildRouter() => GoRouter(
               builder: (context, state) => const SettingsScreen(),
             ),
           ],
+        ),
+        GoRoute(
+          path: '/goals/:id',
+          builder: (context, state) {
+            final goal = state.extra as SavingGoalModel;
+            return GoalDetailScreen(goal: goal);
+          },
         ),
         GoRoute(
           path: '/session/new',

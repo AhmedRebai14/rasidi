@@ -17,6 +17,9 @@ import '../../settings/providers/settings_providers.dart';
 import '../../transactions/widgets/add_transaction_sheet.dart';
 import '../../../shared/widgets/transaction_tile.dart';
 import '../../../shared/widgets/empty_state.dart';
+import '../../../shared/widgets/insight_card.dart';
+import '../../../features/insights/providers/insights_provider.dart';
+import '../../../features/gamification/providers/user_stats_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -145,6 +148,10 @@ class HomeScreen extends ConsumerWidget {
               _buildHeroCard(context, remaining, totalIncome, totalExpenses,
                   currency, burnRate, healthStatus, session.isOpen, t, isDark),
               const SizedBox(height: 12),
+              _buildGamificationBar(ref, t, isDark),
+              const SizedBox(height: 8),
+              _buildInsightsSection(ref, t, isDark),
+              const SizedBox(height: 4),
               if (session.isClosed) _buildClosedBanner(context, t, isDark),
               _buildBudgetWarning(ref, session.id, t, isDark),
               const SizedBox(height: 4),
@@ -231,6 +238,108 @@ class HomeScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildGamificationBar(WidgetRef ref, String Function(String) t, bool isDark) {
+    final stats = ref.watch(userStatsProvider);
+    final levelProgress = stats.levelProgress;
+    final streak = stats.dailyLogStreak;
+    final cardColor = isDark ? AppColors.darkSurface : AppColors.lightSurface;
+    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
+    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: cardColor,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [BoxShadow(color: Colors.black.withAlpha(20), blurRadius: 8, offset: const Offset(0, 2))],
+        ),
+        child: Row(
+          children: [
+            // Streak pill
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withAlpha(26),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('🔥', style: TextStyle(fontSize: 16)),
+                  const SizedBox(width: 4),
+                  Text('$streak', style: AppTextStyles.labelSmall.copyWith(color: AppColors.primary, fontWeight: FontWeight.w700)),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            // XP level bar
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(stats.levelTitle, style: AppTextStyles.labelSmall.copyWith(color: textPrimary, fontWeight: FontWeight.w600)),
+                      Text('${stats.totalXP} XP', style: AppTextStyles.labelSmall.copyWith(color: textSecondary)),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: levelProgress,
+                      backgroundColor: AppColors.primary.withAlpha(40),
+                      color: AppColors.primary,
+                      minHeight: 6,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInsightsSection(WidgetRef ref, String Function(String) t, bool isDark) {
+    final settings = ref.watch(settingsProvider);
+    final insights = ref.watch(insightsProvider).where((i) => !i.isDismissed).toList();
+    if (insights.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+          child: Text(t('insights_title'),
+              style: AppTextStyles.labelSmall.copyWith(
+                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                fontWeight: FontWeight.w600,
+              )),
+        ),
+        SizedBox(
+          height: 110,
+          child: PageView.builder(
+            padEnds: false,
+            itemCount: insights.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: EdgeInsets.only(left: index == 0 ? 16 : 8, right: index == insights.length - 1 ? 16 : 0),
+                child: InsightCard(
+                  insight: insights[index],
+                  language: settings.language,
+                  onDismiss: () => ref.read(insightsProvider.notifier).dismiss(insights[index].id),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 

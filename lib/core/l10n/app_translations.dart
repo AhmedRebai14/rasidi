@@ -36,6 +36,7 @@ class AppTranslations {
     'nav_transactions': {'en': 'Transactions', 'ar': 'المعاملات', 'fr': 'Transactions'},
     'nav_analytics': {'en': 'Analytics', 'ar': 'التحليلات', 'fr': 'Analytiques'},
     'nav_savings': {'en': 'Savings', 'ar': 'المدخرات', 'fr': 'Épargne'},
+    'nav_goals': {'en': 'Goals', 'ar': 'الأهداف', 'fr': 'Objectifs'},
     'nav_settings': {'en': 'Settings', 'ar': 'الإعدادات', 'fr': 'Paramètres'},
 
     // ── Onboarding ───────────────────────────────────────────────
@@ -815,6 +816,153 @@ class AppTranslations {
       'ar': 'أضف ملاحظات أو تفاصيل إضافية...',
       'fr': 'Ajoutez des notes ou détails supplémentaires...',
     },
+
+    // ── Insights (keys matching insight_generator.dart) ──────────
+    'insights_title': {'en': 'Smart Insights', 'ar': 'رؤى ذكية', 'fr': 'Analyses intelligentes'},
+
+    // Week-over-week (insight_wow_*)
+    'insight_wow_title': {'en': 'Spending This Week', 'ar': 'إنفاق هذا الأسبوع', 'fr': 'Dépenses cette semaine'},
+    'insight_wow_body': {'en': 'You spent {pct}% {dir} than last week ({amount})', 'ar': 'أنفقت {pct}% {dir} من الأسبوع الماضي ({amount})', 'fr': 'Vous avez dépensé {pct}% {dir} que la semaine dernière ({amount})'},
+
+    // Category spike (insight_catspike_*)
+    'insight_catspike_title': {'en': 'Spike in {category}', 'ar': 'ارتفاع في {category}', 'fr': 'Pic dans {category}'},
+    'insight_catspike_body': {'en': '{pct}% above your average in {category} this week', 'ar': '{pct}% فوق متوسطك في {category} هذا الأسبوع', 'fr': '{pct}% au-dessus de votre moyenne dans {category} cette semaine'},
+
+    // Pace warning (insight_pace_warn_*)
+    'insight_pace_warn_title': {'en': 'Spending Too Fast ⚠️', 'ar': 'الإنفاق بسرعة كبيرة ⚠️', 'fr': 'Dépenses trop rapides ⚠️'},
+    'insight_pace_warn_body': {'en': 'At this pace you\'ll run out in {days} days', 'ar': 'بهذه الوتيرة ستنفد أموالك خلال {days} أيام', 'fr': 'À ce rythme vous serez à court dans {days} jours'},
+
+    // Pace positive (insight_pace_pos_*)
+    'insight_pace_pos_title': {'en': 'On Track! 🎉', 'ar': 'على المسار الصحيح! 🎉', 'fr': 'En bonne voie! 🎉'},
+    'insight_pace_pos_body': {'en': '{amount} remaining · {days} days left — great pace!', 'ar': 'تبقى {amount} · {days} أيام متبقية — وتيرة رائعة!', 'fr': '{amount} restant · {days} jours — excellent rythme!'},
+
+    // No-spend streak (insight_nospend_*)
+    'insight_nospend_title': {'en': 'No-Spend Streak �', 'ar': 'سلسلة بدون إنفاق �', 'fr': 'Série sans dépenses �'},
+    'insight_nospend_body': {'en': '{days} days without any expenses — amazing discipline!', 'ar': '{days} أيام بدون أي مصاريف — انضباط مذهل!', 'fr': '{days} jours sans aucune dépense — discipline incroyable!'},
+
+    // Off-budget saved (insight_offbudget_*)
+    'insight_offbudget_title': {'en': 'Great Savings This Month', 'ar': 'ادخار رائع هذا الشهر', 'fr': 'Excellentes économies ce mois'},
+    'insight_offbudget_body': {'en': 'You\'re under budget by {amount} with {days} days left', 'ar': 'أنت تحت الميزانية بمقدار {amount} ومتبقي {days} أيام', 'fr': 'Vous êtes sous budget de {amount} avec {days} jours restants'},
+
+    // Best day (insight_bestday_*)
+    'insight_bestday_title': {'en': 'Best Day of the Week', 'ar': 'أفضل يوم في الأسبوع', 'fr': 'Meilleur jour de la semaine'},
+    'insight_bestday_body': {'en': '{day} was your lightest spend day ({amount})', 'ar': '{day} كان يوم إنفاقك الأقل ({amount})', 'fr': '{day} était votre journée la plus légère ({amount})'},
+
+    // ── Challenges (keys matching challenges_provider.dart) ───────
+    'challenge_nospend_title': {'en': 'No-Spend Week', 'ar': 'أسبوع بدون إنفاق', 'fr': 'Semaine sans dépenses'},
+    'challenge_nospend_desc': {'en': 'Go 7 days without any expenses', 'ar': 'مرّ 7 أيام بدون أي مصاريف', 'fr': 'Passez 7 jours sans aucune dépense'},
+    'challenge_log7_title': {'en': '7-Day Logger', 'ar': 'مسجّل 7 أيام', 'fr': 'Journaliste 7 jours'},
+    'challenge_log7_desc': {'en': 'Log a transaction every day for 7 days', 'ar': 'سجّل معاملة كل يوم لمدة 7 أيام', 'fr': 'Enregistrez une transaction chaque jour pendant 7 jours'},
+    'challenge_beat_title': {'en': 'Budget Champion', 'ar': 'بطل الميزانية', 'fr': 'Champion du budget'},
+    'challenge_beat_desc': {'en': 'Stay under budget for an entire month', 'ar': 'ابق ضمن الميزانية طوال الشهر', 'fr': 'Restez sous le budget pendant tout un mois'},
+    'challenge_receipt_title': {'en': 'Receipt Collector', 'ar': 'جامع الإيصالات', 'fr': 'Collecteur de reçus'},
+    'challenge_receipt_desc': {'en': 'Add receipts to 5 transactions', 'ar': 'أضف إيصالات لـ 5 معاملات', 'fr': 'Ajoutez des reçus à 5 transactions'},
+    'challenge_save10k_title': {'en': 'Big Saver', 'ar': 'المدخر الكبير', 'fr': 'Grand épargnant'},
+    'challenge_save10k_desc': {'en': 'Save 10,000 across your saving goals', 'ar': 'ادخر 10,000 عبر أهداف الادخار', 'fr': 'Épargnez 10 000 dans vos objectifs d\'épargne'},
+    'challenge_3month_title': {'en': '3-Month Streak', 'ar': 'سلسلة 3 أشهر', 'fr': 'Série de 3 mois'},
+    'challenge_3month_desc': {'en': 'Use Rasidi for 3 consecutive months', 'ar': 'استخدم رصيدي لمدة 3 أشهر متتالية', 'fr': 'Utilisez Rasidi pendant 3 mois consécutifs'},
+
+    // ── Notifications (keys matching notification_service.dart) ───
+    'notif_budget_at': {'en': 'is at', 'ar': 'وصل إلى', 'fr': 'est à'},
+    'notif_only': {'en': 'Only', 'ar': 'فقط', 'fr': 'Seulement'},
+    'notif_remaining': {'en': 'remaining', 'ar': 'متبقي', 'fr': 'restant'},
+    'notif_limit_was': {'en': 'limit was', 'ar': 'الحد كان', 'fr': 'la limite était'},
+    'notif_great_progress': {'en': 'Great progress on your goal!', 'ar': 'تقدم رائع نحو هدفك!', 'fr': 'Excellent progrès vers votre objectif!'},
+    'goals_title': {'en': 'Goals & Challenges', 'ar': 'الأهداف والتحديات', 'fr': 'Objectifs et défis'},
+    'goals_tab_goals': {'en': 'Goals', 'ar': 'الأهداف', 'fr': 'Objectifs'},
+    'goals_tab_challenges': {'en': 'Challenges', 'ar': 'التحديات', 'fr': 'Défis'},
+    'goals_tab_badges': {'en': 'Badges', 'ar': 'الشارات', 'fr': 'Badges'},
+    'goals_empty': {'en': 'No saving goals yet.\nTap + to create your first goal!', 'ar': 'لا توجد أهداف ادخار بعد.\naضغط + لإنشاء هدفك الأول!', 'fr': 'Aucun objectif d\'épargne.\nAppuyez sur + pour créer votre premier objectif!'},
+    'goals_new': {'en': 'New Saving Goal', 'ar': 'هدف ادخار جديد', 'fr': 'Nouvel objectif d\'épargne'},
+    'goals_name': {'en': 'Goal name', 'ar': 'اسم الهدف', 'fr': 'Nom de l\'objectif'},
+    'goals_target_amount': {'en': 'Target amount', 'ar': 'المبلغ المستهدف', 'fr': 'Montant cible'},
+    'goals_icon': {'en': 'Choose icon', 'ar': 'اختر أيقونة', 'fr': 'Choisir une icône'},
+    'goals_color': {'en': 'Choose color', 'ar': 'اختر لوناً', 'fr': 'Choisir une couleur'},
+    'goals_deadline': {'en': 'Deadline (optional)', 'ar': 'الموعد النهائي (اختياري)', 'fr': 'Échéance (optionnelle)'},
+    'goals_add_funds': {'en': 'Add Funds', 'ar': 'إضافة أموال', 'fr': 'Ajouter des fonds'},
+    'goals_history': {'en': 'Contribution History', 'ar': 'سجل المساهمات', 'fr': 'Historique des contributions'},
+    'goals_delete_confirm': {'en': 'Delete this goal? This cannot be undone.', 'ar': 'حذف هذا الهدف؟ لا يمكن التراجع عن هذا.', 'fr': 'Supprimer cet objectif? Cette action est irréversible.'},
+    'goals_completed': {'en': 'Completed! 🎉', 'ar': 'مكتمل! 🎉', 'fr': 'Complété! 🎉'},
+    'goals_left': {'en': 'left', 'ar': 'متبقي', 'fr': 'restant'},
+    'goals_day': {'en': 'day', 'ar': 'يوم', 'fr': 'jour'},
+    'goals_days': {'en': 'days', 'ar': 'أيام', 'fr': 'jours'},
+    'goals_save': {'en': 'Save Goal', 'ar': 'حفظ الهدف', 'fr': 'Enregistrer l\'objectif'},
+    'goals_detail_progress': {'en': 'Progress', 'ar': 'التقدم', 'fr': 'Progression'},
+    'goals_no_contributions': {'en': 'No contributions yet', 'ar': 'لا توجد مساهمات بعد', 'fr': 'Aucune contribution pour l\'instant'},
+
+    // ── Badges (keys matching badge_definitions.dart *_title/*_desc) ──
+    'badge_saver_desc': {'en': 'Created your first saving goal', 'ar': 'أنشأت هدف ادخار أول', 'fr': 'Créé votre premier objectif d\'épargne'},
+    'badge_no_spender_desc': {'en': '3 days without spending', 'ar': '3 أيام بدون إنفاق', 'fr': '3 jours sans dépenses'},
+    'badge_week_warrior_desc': {'en': 'Logged transactions for 7 days in a row', 'ar': 'سجّلت معاملات لمدة 7 أيام متتالية', 'fr': 'Transactions enregistrées 7 jours de suite'},
+    'badge_month_master_desc': {'en': '30-day logging streak', 'ar': 'سلسلة تسجيل 30 يوماً', 'fr': 'Série de 30 jours d\'enregistrement'},
+    'badge_goal_crusher_desc': {'en': 'Completed a saving goal', 'ar': 'أكملت هدف ادخار', 'fr': 'Complété un objectif d\'épargne'},
+    'badge_streak_king_desc': {'en': '14-day no-overspend streak', 'ar': 'سلسلة 14 يوماً بدون إنفاق زائد', 'fr': 'Série de 14 jours sans dépassement'},
+    'badge_receipt_keeper_desc': {'en': 'Added receipts to 10 transactions', 'ar': 'أضفت إيصالات لـ 10 معاملات', 'fr': 'Ajouté des reçus à 10 transactions'},
+    'badge_high_roller_desc': {'en': 'Reached XP Level 5', 'ar': 'وصلت إلى المستوى 5', 'fr': 'Atteint le niveau XP 5'},
+    'badge_three_months_desc': {'en': 'Used Rasidi for 3 months', 'ar': 'استخدمت رصيدي لمدة 3 أشهر', 'fr': 'Utilisé Rasidi pendant 3 mois'},
+    'badge_rasidi_pro_desc': {'en': 'Reached level 5 — you\'re a financial master!', 'ar': 'وصلت إلى المستوى 5 — أنت سيد مالي!', 'fr': 'Atteint le niveau 5 — vous êtes un maître financier!'},
+    'badge_locked': {'en': 'Locked', 'ar': 'مقفل', 'fr': 'Verrouillé'},
+
+    // ── Notification settings ──────────────────────────────────────
+    'settings_notifications': {'en': 'Notifications', 'ar': 'الإشعارات', 'fr': 'Notifications'},
+    'notif_setting_master': {'en': 'Enable Notifications', 'ar': 'تفعيل الإشعارات', 'fr': 'Activer les notifications'},
+    'notif_setting_insights': {'en': 'Smart Insights', 'ar': 'رؤى ذكية', 'fr': 'Analyses intelligentes'},
+    'notif_setting_streaks': {'en': 'Streak Reminders', 'ar': 'تذكيرات السلاسل', 'fr': 'Rappels de série'},
+    'notif_setting_budget': {'en': 'Budget Warnings', 'ar': 'تحذيرات الميزانية', 'fr': 'Avertissements de budget'},
+    'notif_setting_goals': {'en': 'Goal Milestones', 'ar': 'إنجازات الأهداف', 'fr': 'Jalons des objectifs'},
+    'notif_setting_challenges': {'en': 'Challenge Updates', 'ar': 'تحديثات التحديات', 'fr': 'Mises à jour des défis'},
+    'notif_setting_settlement': {'en': 'Settlement Reminders', 'ar': 'تذكيرات التسوية', 'fr': 'Rappels de règlement'},
+    'notif_setting_weekly': {'en': 'Weekly Summary', 'ar': 'ملخص أسبوعي', 'fr': 'Résumé hebdomadaire'},
+    'notif_setting_balance': {'en': 'Balance Alerts', 'ar': 'تنبيهات الرصيد', 'fr': 'Alertes de solde'},
+    'notif_setting_motivational': {'en': 'Motivational Messages', 'ar': 'رسائل تحفيزية', 'fr': 'Messages de motivation'},
+
+    // ── Notification content (keys matching notification_service.dart) ──
+    'notif_daily_insight_title': {'en': 'Your Daily Insight', 'ar': 'رؤيتك اليومية', 'fr': 'Votre analyse du jour'},
+    'notif_daily_insight_body': {'en': 'Check your new financial insight for today', 'ar': 'تحقق من رؤيتك المالية الجديدة اليوم', 'fr': 'Consultez votre nouvelle analyse financière du jour'},
+    'notif_streak_title': {'en': 'Don\'t Break Your Streak! 🔥', 'ar': 'لا تكسر سلسلتك! 🔥', 'fr': 'Ne brisez pas votre série! 🔥'},
+    'notif_streak_body': {'en': 'Log a transaction today to keep your streak alive', 'ar': 'سجّل معاملة اليوم لإبقاء سلسلتك حية', 'fr': 'Enregistrez une transaction aujourd\'hui pour maintenir votre série'},
+    'notif_weekly_title': {'en': 'Weekly Summary 📊', 'ar': 'الملخص الأسبوعي 📊', 'fr': 'Résumé hebdomadaire 📊'},
+    'notif_weekly_body': {'en': 'See how your spending shaped up this week', 'ar': 'تحقق من أداء إنفاقك هذا الأسبوع', 'fr': 'Découvrez comment vos dépenses se sont comportées cette semaine'},
+    'notif_settle_title': {'en': 'Time to Settle! 📅', 'ar': 'حان وقت التسوية! 📅', 'fr': 'Il est temps de régler! 📅'},
+    'notif_settle_body': {'en': 'The month is ending — complete your settlement', 'ar': 'الشهر يقترب من نهايته — أكمل تسويتك', 'fr': 'Le mois se termine — complétez votre règlement'},
+    'notif_challenge_title': {'en': 'Challenge Time! 🏆', 'ar': 'وقت التحدي! 🏆', 'fr': 'Heure du défi! 🏆'},
+    'notif_challenge_body': {'en': 'You have active challenges — keep pushing!', 'ar': 'لديك تحديات نشطة — استمر!', 'fr': 'Vous avez des défis actifs — continuez!'},
+    'notif_budget_exceeded': {'en': 'Budget Alert ⚠️', 'ar': 'تنبيه الميزانية ⚠️', 'fr': 'Alerte budget ⚠️'},
+    'notif_balance_alert': {'en': 'Low Balance Warning', 'ar': 'تحذير انخفاض الرصيد', 'fr': 'Avertissement solde faible'},
+    'notif_goal_completed': {'en': 'Goal Achieved! 🎯', 'ar': 'تم تحقيق الهدف! 🎯', 'fr': 'Objectif atteint! 🎯'},
+    'notif_level_up': {'en': 'Level Up! 🎉', 'ar': 'ارتقيت مستوى! 🎉', 'fr': 'Niveau supérieur! 🎉'},
+    'notif_challenge_done': {'en': 'Challenge Complete! 🏆', 'ar': 'اكتمل التحدي! 🏆', 'fr': 'Défi complété! 🏆'},
+
+    // ── Goals screen — short utility keys ────────────────────────
+    'days': {'en': 'days', 'ar': 'أيام', 'fr': 'jours'},
+    'left': {'en': 'left', 'ar': 'متبقي', 'fr': 'restant'},
+    'goals_empty_sub': {'en': 'Start saving towards something you love', 'ar': 'ابدأ الادخار نحو شيء تحبه', 'fr': 'Commencez à épargner pour quelque chose que vous aimez'},
+    'goals_add_deadline': {'en': '+ Add Deadline', 'ar': '+ إضافة موعد نهائي', 'fr': '+ Ajouter une échéance'},
+
+    // ── Challenge screen keys ─────────────────────────────────────
+    'challenge_section_active': {'en': 'Active', 'ar': 'نشط', 'fr': 'Actif'},
+    'challenge_section_available': {'en': 'Available', 'ar': 'متاح', 'fr': 'Disponible'},
+    'challenge_section_completed': {'en': 'Completed', 'ar': 'مكتمل', 'fr': 'Complété'},
+    'challenge_section_failed': {'en': 'Failed', 'ar': 'فاشل', 'fr': 'Échoué'},
+    'challenge_start': {'en': 'Start', 'ar': 'ابدأ', 'fr': 'Commencer'},
+    'challenge_completed': {'en': 'Completed ✓', 'ar': 'مكتمل ✓', 'fr': 'Complété ✓'},
+
+    // ── Badge keys (matching badge_definitions.dart titleKey/descKey) ──
+    'badge_first_tx': {'en': 'First Step', 'ar': 'الخطوة الأولى', 'fr': 'Premier pas'},
+    'badge_first_tx_desc': {'en': 'Logged your very first transaction', 'ar': 'سجّلت معاملتك الأولى', 'fr': 'Enregistré votre toute première transaction'},
+    'badge_first_settle': {'en': 'Settler', 'ar': 'المُسوّي', 'fr': 'Règleur'},
+    'badge_first_settle_desc': {'en': 'Completed your first monthly settlement', 'ar': 'أكملت تسويتك الشهرية الأولى', 'fr': 'Complété votre premier règlement mensuel'},
+    'badge_saver': {'en': 'Saver', 'ar': 'المدخر', 'fr': 'Épargnant'},
+    'badge_no_spender': {'en': 'No-Spender', 'ar': 'بدون إنفاق', 'fr': 'Sans dépenses'},
+    'badge_week_warrior': {'en': 'Week Warrior', 'ar': 'محارب الأسبوع', 'fr': 'Guerrier de la semaine'},
+    'badge_month_master': {'en': 'Month Master', 'ar': 'سيد الشهر', 'fr': 'Maître du mois'},
+    'badge_goal_crusher': {'en': 'Goal Crusher', 'ar': 'محقق الأهداف', 'fr': 'Briseur d\'objectifs'},
+    'badge_streak_king': {'en': 'Streak King', 'ar': 'ملك السلاسل', 'fr': 'Roi des séries'},
+    'badge_receipt_keeper': {'en': 'Receipt Keeper', 'ar': 'حافظ الإيصالات', 'fr': 'Gardien des reçus'},
+    'badge_high_roller': {'en': 'High Roller', 'ar': 'اللاعب الكبير', 'fr': 'Haut Rouleur'},
+    'badge_three_months': {'en': 'Consistent', 'ar': 'ثابت', 'fr': 'Constant'},
+    'badge_rasidi_pro': {'en': 'Rasidi Pro', 'ar': 'رصيدي برو', 'fr': 'Rasidi Pro'},
+    'badge_secret_hint': {'en': '??? — Keep using Rasidi to unlock', 'ar': '??? — استمر في استخدام رصيدي للفتح', 'fr': '??? — Continuez à utiliser Rasidi pour débloquer'},
   };
 
   /// Get a translated string by key. Falls back to English then to key itself.

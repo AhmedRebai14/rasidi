@@ -10,6 +10,7 @@ import 'features/settings/providers/settings_providers.dart';
 import 'features/lock/screens/lock_screen.dart';
 import 'shared/services/hive_service.dart';
 import 'shared/services/recurring_transaction_service.dart';
+import 'shared/services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +25,7 @@ void main() async {
   }
 
   await RecurringTransactionService.processRecurring();
+  await NotificationService.instance.initialize();
   runApp(const ProviderScope(child: RasidiApp()));
 }
 
@@ -45,9 +47,19 @@ class _RasidiAppState extends ConsumerState<RasidiApp>
     WidgetsBinding.instance.addObserver(this);
     // Keep Riverpod appLockedProvider in sync with the ValueNotifier
     // (used by any UI that reads the Riverpod provider directly).
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (isAppLocked) {
         ref.read(appLockedProvider.notifier).state = true;
+      }
+      // Schedule daily notifications
+      final settings = ref.read(settingsProvider);
+      if (settings.notificationsEnabled) {
+        await NotificationService.instance.scheduleAllDailyNotifications(
+          settings: settings,
+          session: null,
+          transactions: const [],
+          dailyLogStreak: 0,
+        );
       }
     });
   }
